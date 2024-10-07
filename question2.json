@@ -1,0 +1,52 @@
+[
+    {
+      "question": "Robot 1 is in (1,1) position. It sees a blue bottle in (5,8) position with “NF” written in handwriting. R1 has to tell the owner's name. Who is the owner?",
+      "options": {
+        "a": "Shuvo",
+        "b": "Nafiul",
+        "c": "Shawn",
+        "d": "Kim"
+      },
+      "answer": "b"
+    },
+    {
+      "question": "The Robot R2 sees a cup which is red in color as well as a plastic cup. But it couldn’t locate the unique feature. Where can it find the unique feature?",
+      "options": {
+        "a": "Bottom of the cup",
+        "b": "Top right of the Cup",
+        "c": "Top left of the Cup",
+        "d": "Bottom left of the Cup"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "If R1 wants to reach C1, which side should it move first?",
+      "options": {
+        "a": "Up",
+        "b": "Down",
+        "c": "Left",
+        "d": "Right"
+      },
+      "answer": "d"
+    },
+    {
+      "question": "R1 is currently at position (1,1) and sees a clear bottle with a “SH” logo at position (7,6). Who is the owner of this bottle?",
+      "options": {
+        "a": "Shuvo",
+        "b": "Nafiul",
+        "c": "Shawn",
+        "d": "Kim"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "R2 is at position (7,9) and needs to reach B2 (Bottle 2) at (5,8). What direction should R2 move first?",
+      "options": {
+        "a": "Left",
+        "b": "Right",
+        "c": "Down",
+        "d": "Up"
+      },
+      "answer": "d"
+    }
+]

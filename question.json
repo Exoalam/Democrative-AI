@@ -1,0 +1,203 @@
+[
+    {
+      "question": "Robot 1 is in (1,1) position. It sees a blue bottle in (5,8) position with “NF” written in handwriting. R1 has to tell the owner's name. Who is the owner?",
+      "options": {
+        "a": "Shuvo",
+        "b": "Nafiul",
+        "c": "Shawn",
+        "d": "Kim"
+      },
+      "answer": "b"
+    },
+    {
+      "question": "The Robot R2 sees a cup which is red in color as well as a plastic cup. But it couldn’t locate the unique feature. Where can it find the unique feature?",
+      "options": {
+        "a": "Bottom of the cup",
+        "b": "Top right of the Cup",
+        "c": "Top left of the Cup",
+        "d": "Bottom left of the Cup"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "If R1 wants to reach C1, which side should it move first?",
+      "options": {
+        "a": "Up",
+        "b": "Down",
+        "c": "Left",
+        "d": "Right"
+      },
+      "answer": "d"
+    },
+    {
+      "question": "R1 is currently at position (1,1) and sees a clear bottle with a “SH” logo at position (7,6). Who is the owner of this bottle?",
+      "options": {
+        "a": "Shuvo",
+        "b": "Nafiul",
+        "c": "Shawn",
+        "d": "Kim"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "R2 is at position (7,9) and needs to reach B2 (Bottle 2) at (5,8). What direction should R2 move first?",
+      "options": {
+        "a": "Left",
+        "b": "Right",
+        "c": "Down",
+        "d": "Up"
+      },
+      "answer": "d"
+    },
+    {
+      "question": "If R1 is moving towards the cup at (9,3), which obstacle should it avoid on its path?",
+      "options": {
+        "a": "(7,1)",
+        "b": "(5,5)",
+        "c": "(3,8)",
+        "d": "All of the above"
+      },
+      "answer": "b"
+    },
+    {
+      "question": "R2 sees an obstacle at (7,1) and has to avoid it while navigating. If it wants to go downwards first, which grid should it move to next to avoid the obstacle?",
+      "options": {
+        "a": "(7,2)",
+        "b": "(6,1)",
+        "c": "(8,1)",
+        "d": "(6,2)"
+      },
+      "answer": "d"
+    },
+    {
+      "question": "If R1 wants to go from its current position (1,1) to Bottle B2 at (5,8), how many total grids must it cross, avoiding obstacles?",
+      "options": {
+        "a": "11",
+        "b": "10",
+        "c": "9",
+        "d": "12"
+      },
+      "answer": "b"
+    },
+    {
+      "question": "Which of the following objects is made of metal?",
+      "options": {
+        "a": "C1",
+        "b": "B1",
+        "c": "B2",
+        "d": "C2"
+      },
+      "answer": "c"
+    },
+    {
+      "question": "Robot R2 is trying to locate the cup with a red rose printed on it. Where should it search?",
+      "options": {
+        "a": "(9,3)",
+        "b": "(10,10)",
+        "c": "(7,6)",
+        "d": "(5,8)"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "Which of the following objects is located at the position (10,10)?",
+      "options": {
+        "a": "Clear plastic bottle",
+        "b": "Red plastic cup",
+        "c": "Cylindrical ceramic cup",
+        "d": "Cylindrical blue bottle"
+      },
+      "answer": "b"
+    },
+    {
+      "question": "R1 wants to collect the bottles and cups in sequence, starting with B1. After B1, which object should it collect next?",
+      "options": {
+        "a": "B2",
+        "b": "C1",
+        "c": "C2",
+        "d": "Ob2"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "R1 reaches (5,5) and encounters an obstacle. What should it do?",
+      "options": {
+        "a": "Move left",
+        "b": "Move right",
+        "c": "Skip the grid and choose another path",
+        "d": "Stop"
+      },
+      "answer": "c"
+    },
+    {
+      "question": "R2 needs to move towards C2 (10,10) from its current position (7,9). Which direction should it move in first?",
+      "options": {
+        "a": "Right",
+        "b": "Down",
+        "c": "Left",
+        "d": "Up"
+      },
+      "answer": "b"
+    },
+    {
+      "question": "Which cup has a unique feature located in the middle-left of the cup?",
+      "options": {
+        "a": "C1",
+        "b": "C2",
+        "c": "B1",
+        "d": "B2"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "The Robot R2 is at (7,9) and needs to pick up the metal bottle. Which position should it navigate to?",
+      "options": {
+        "a": "(5,8)",
+        "b": "(7,6)",
+        "c": "(9,3)",
+        "d": "(10,10)"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "R1 is approaching Ob1 at (7,1). Which of the following strategies would help it avoid the obstacle?",
+      "options": {
+        "a": "Move to (6,1)",
+        "b": "Move to (8,1)",
+        "c": "Move to (6,2)",
+        "d": "Move to (8,2)"
+      },
+      "answer": "c"
+    },
+    {
+      "question": "The bottle with the “SH” logo is located at which position?",
+      "options": {
+        "a": "(7,6)",
+        "b": "(5,8)",
+        "c": "(9,3)",
+        "d": "(10,10)"
+      },
+      "answer": "a"
+    },
+    {
+      "question": "R1 is moving toward C1 (9,3). What is the color of the cup at this position?",
+      "options": {
+        "a": "Red",
+        "b": "White",
+        "c": "Blue",
+        "d": "Clear"
+      },
+      "answer": "b"
+    },
+    {
+      "question": "R2 is trying to reach the red plastic cup. What is its owner’s name?",
+      "options": {
+        "a": "Shuvo",
+        "b": "Nafiul",
+        "c": "Shawn",
+        "d": "Kim"
+      },
+      "answer": "d"
+    }
+  ]
+  

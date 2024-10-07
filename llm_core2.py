@@ -1,13 +1,20 @@
 import json
 import random
+import re
 from langchain_community.llms import Ollama
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from pymongo import MongoClient
 
 def load_json_file(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+    encodings = ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252']
+    for encoding in encodings:
+        try:
+            with open(file_path, 'r', encoding=encoding) as file:
+                return json.load(file)
+        except UnicodeDecodeError:
+            continue
+    raise ValueError(f"Unable to decode the file {file_path} with the attempted encodings: {encodings}")
 
 def scramble_sequence(data):
     keys = list(data.keys())
@@ -23,7 +30,7 @@ prompt_template = PromptTemplate(
 
 {mcq}
 
-Your answer (provide only the letter of your choice, nothing more and no explanation):
+Your answer (provide ONLY the letter of your choice, e.g., 'a' or 'b' or 'c' or 'd', nothing more):
 
 Now, based on the following scrambled elements and your memory of previous questions, please provide your analysis or response:
 {scrambled_elements}
@@ -39,24 +46,27 @@ class Agent:
         self.chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
         self.agent_id = agent_id
         self.db = db
-        self.correct_answers = 0
-        self.total_questions = 0
 
     def answer(self, mcq, scrambled_elements):
         memory = self.get_memory()
         memory_str = "\n".join(memory)
         response = self.chain.run(mcq=mcq, scrambled_elements=scrambled_elements, memory=memory_str)
-        mcq_answer = response.split()[0]
+        
+        # Extract only the letter answer using regex
+        match = re.search(r'^([a-d])', response.lower().strip())
+        if match:
+            mcq_answer = match.group(1)
+        else:
+            mcq_answer = "Invalid"  # or some default value
+        
         return mcq_answer, response
 
     def update_memory(self, question, answer, correct_answer):
         result = "correct" if answer.upper() == correct_answer.upper() else "incorrect"
         
-        # Check if the question already exists in the database
         existing_question = self.db.questions.find_one({"question": question})
         
         if existing_question:
-            # Update the existing question with the new answer
             self.db.questions.update_one(
                 {"_id": existing_question["_id"]},
                 {"$set": {f"agents.{self.agent_id}": {
@@ -66,7 +76,6 @@ class Agent:
                 }}}
             )
         else:
-            # Insert a new question document
             self.db.questions.insert_one({
                 "question": question,
                 "agents": {
@@ -79,7 +88,6 @@ class Agent:
             })
 
     def get_memory(self):
-        # Retrieve the last 5 questions for this agent
         questions = self.db.questions.find(
             {f"agents.{self.agent_id}": {"$exists": True}},
             sort=[("_id", -1)],
@@ -94,78 +102,71 @@ class Agent:
         
         return memory
 
-    def update_score(self, correct):
-        self.total_questions += 1
-        if correct:
-            self.correct_answers += 1
-
 def create_agents(num_agents, llm, db):
     return [Agent(llm, prompt_template, f"agent_{i}", db) for i in range(num_agents)]
 
 def get_all_responses(agents, elements, mcq, correct_answer):
-    responses = []
-    for i, agent in enumerate(agents):
+    correct_count = 0
+    for agent in agents:
         scrambled = scramble_sequence(elements)
         scrambled_str = json.dumps(scrambled, indent=2)
-        mcq_answer, full_response = agent.answer(mcq, scrambled_str)
+        mcq_answer, _ = agent.answer(mcq, scrambled_str)
         
         is_correct = mcq_answer.upper() == correct_answer.upper()
         agent.update_memory(mcq, mcq_answer, correct_answer)
-        agent.update_score(is_correct)
         
-        accuracy = agent.correct_answers / agent.total_questions if agent.total_questions > 0 else 0
-        responses.append(f"Agent {i+1}:\nMCQ Response: {mcq_answer}\nCorrect: {is_correct}\nAccuracy: {accuracy:.2f}")
+        if is_correct:
+            correct_count += 1
     
-    return responses
+    return correct_count, len(agents)
 
-def get_mcq_from_user():
-    print("Enter your multiple-choice question:")
-    question = input("Question: ")
-    options = []
-    print("Enter the options (one per line). Type 'done' when finished:")
-    while True:
-        option = input()
-        if option.lower() == 'done':
-            break
-        options.append(option)
-    
-    mcq = f"{question}\n" + "\n".join(f"{chr(65+i)}) {option}" for i, option in enumerate(options))
-    correct_answer = input("Enter the correct answer (A, B, C, etc.): ")
-    return mcq, correct_answer
+def format_mcq(question_data):
+    question = question_data["question"]
+    options = question_data["options"]
+    mcq = f"{question}\n" + "\n".join(f"{key}) {value}" for key, value in options.items())
+    return mcq
 
 if __name__ == "__main__":
     json_file_path = "init.json"
+    questions_file_path = "question2.json"
     ollama_base_url = "http://vrworkstation.atr.cs.kent.edu:11434"
     ollama_model = "llama3.2:3b"
     num_agents = 10
 
-    # MongoDB connection
     mongo_client = MongoClient("mongodb://localhost:27017/")
     db = mongo_client["agent_memory_db"]
 
     elements = load_json_file(json_file_path)
+    questions = load_json_file(questions_file_path)
     llm = init_ollama(ollama_base_url, ollama_model)
     agents = create_agents(num_agents, llm, db)
 
+    question_accuracies = {i: [] for i in range(len(questions))}
+
+    iteration = 1
     while True:
-        # Get MCQ and correct answer from user
-        mcq, correct_answer = get_mcq_from_user()
-
-        all_responses = get_all_responses(agents, elements, mcq, correct_answer)
+        print(f"\nIteration {iteration}")
+        print("-" * 20)
         
-        print(f"\nResponses from {num_agents} agents:\n")
-        for response in all_responses:
-            print(response)
-            print("-" * 50)
-
-        continue_prompt = input("Do you want to ask another question? (yes/no): ")
+        for i, question_data in enumerate(questions):
+            mcq = format_mcq(question_data)
+            correct_answer = question_data["answer"]
+            
+            correct_count, total_count = get_all_responses(agents, elements, mcq, correct_answer)
+            accuracy = correct_count / total_count
+            question_accuracies[i].append(accuracy)
+            
+            print(f"Question {i+1} - Accuracy: {accuracy:.2f}")
+        
+        print("\nAccuracy trend for each question:")
+        for i, accuracies in question_accuracies.items():
+            trend = " -> ".join(f"{acc:.2f}" for acc in accuracies)
+            print(f"Question {i+1}: {trend}")
+        
+        continue_prompt = input("\nDo you want to run another iteration? (yes/no): ")
         if continue_prompt.lower() != 'yes':
             break
+        
+        iteration += 1
 
-    print("\nFinal Agent Accuracies:")
-    for i, agent in enumerate(agents):
-        accuracy = agent.correct_answers / agent.total_questions if agent.total_questions > 0 else 0
-        print(f"Agent {i+1}: {accuracy:.2f}")
-
-    # Close MongoDB connection
     mongo_client.close()
