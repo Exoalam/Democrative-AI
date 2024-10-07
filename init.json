@@ -1,0 +1,58 @@
+{
+    "Map": {
+      "type": "2D grid",
+      "size": {
+        "width": 10,
+        "height": 10
+      }
+    },
+    "Obstacles": [
+      {"position": [7, 1]},
+      {"position": [5, 5]},
+      {"position": [3, 8]}
+    ],
+    "B1": {
+      "Class": "Bottle",
+      "Position": [7, 6],
+      "Shape": "Cylindrical",
+      "Color": "Clear",
+      "Orientation": 0,
+      "Characteristics": "Plastic",
+      "UniqueFeature": "SH logo",
+      "UniqueFeature'sPosition": "Top right of the bottle",
+      "Owner": "Shuvo"
+    },
+    "B2": {
+      "Class": "Bottle",
+      "Position": [5, 8],
+      "Shape": "Cylindrical",
+      "Color": "Blue",
+      "Orientation": 0,
+      "Characteristics": "Metal",
+      "UniqueFeature": "NF written in handwriting",
+      "UniqueFeature'sPosition": "Bottom left corner of the bottle",
+      "Owner": "Nafiul"
+    },
+    "C1": {
+      "Class": "Cup",
+      "Position": [9, 3],
+      "Shape": "Cylindrical",
+      "Color": "White",
+      "Orientation": 0,
+      "Characteristics": "Ceramic",
+      "UniqueFeature": "Red Rose printed on the cup",
+      "UniqueFeature'sPosition": "Middle-left of the cup",
+      "Owner": "Shawn"
+    },
+    "C2": {
+      "Class": "Cup",
+      "Position": [10, 10],
+      "Shape": "Cylindrical",
+      "Color": "Red",
+      "Orientation": 0,
+      "Characteristics": "Plastic",
+      "UniqueFeature": "have a signature of \"KIM\"",
+      "UniqueFeature'sPosition": "Bottom of the cup",
+      "Owner": "Kim"
+    }
+  }
