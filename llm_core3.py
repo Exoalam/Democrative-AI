@@ -2,9 +2,8 @@ import json
 import random
 import re
 import sqlite3
-from langchain_community.llms import Ollama
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+import os
+import anthropic
 
 def load_json_file(file_path):
     encodings = ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252']
@@ -21,14 +20,14 @@ def scramble_sequence(data):
     random.shuffle(keys)
     return {key: data[key] for key in keys}
 
-def init_ollama(base_url, model="llama3.2:3b"):
-    return Ollama(base_url=base_url, model=model)
+def init_claude():
+    api_key = "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"
+    return anthropic.Anthropic(api_key=api_key)
 
 def init_db():
     conn = sqlite3.connect('agent_memory.db')
     cursor = conn.cursor()
     
-    # Create questions table with agent responses
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,9 +43,18 @@ def init_db():
     conn.commit()
     return conn
 
-prompt_template = PromptTemplate(
-    input_variables=["mcq", "scrambled_elements", "memory"],
-    template="""Please answer the following multiple-choice question:
+class Agent:
+    def __init__(self, client, agent_id, db_conn):
+        self.client = client
+        self.agent_id = agent_id
+        self.db_conn = db_conn
+        self.cursor = db_conn.cursor()
+
+    def answer(self, mcq, scrambled_elements):
+        memory = self.get_memory()
+        memory_str = "\n".join(memory)
+        
+        prompt = f"""Please answer the following multiple-choice question:
 
 {mcq}
 
@@ -56,22 +64,20 @@ Now, based on the following scrambled elements and your memory of previous quest
 {scrambled_elements}
 
 Your memory of previous questions:
-{memory}
+{memory_str}
 
 Your response:"""
-)
 
-class Agent:
-    def __init__(self, llm, prompt, agent_id, db_conn):
-        self.chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
-        self.agent_id = agent_id
-        self.db_conn = db_conn
-        self.cursor = db_conn.cursor()
-
-    def answer(self, mcq, scrambled_elements):
-        memory = self.get_memory()
-        memory_str = "\n".join(memory)
-        response = self.chain.run(mcq=mcq, scrambled_elements=scrambled_elements, memory=memory_str)
+        message = self.client.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=1024,
+            temperature=0.7,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        response = message.content[0].text
         
         # Extract only the letter answer using regex
         match = re.search(r'^([a-d])', response.lower().strip())
@@ -109,8 +115,8 @@ class Agent:
         
         return memory
 
-def create_agents(num_agents, llm, db_conn):
-    return [Agent(llm, prompt_template, f"agent_{i}", db_conn) for i in range(num_agents)]
+def create_agents(num_agents, client, db_conn):
+    return [Agent(client, f"agent_{i}", db_conn) for i in range(num_agents)]
 
 def get_all_responses(agents, elements, mcq, correct_answer):
     correct_count = 0
@@ -136,8 +142,6 @@ def format_mcq(question_data):
 if __name__ == "__main__":
     json_file_path = "init.json"
     questions_file_path = "question2.json"
-    ollama_base_url = "http://vrworkstation.atr.cs.kent.edu:11434"
-    ollama_model = "llama3.2-vision"
     num_agents = 10
 
     # Initialize SQLite database
@@ -145,8 +149,15 @@ if __name__ == "__main__":
 
     elements = load_json_file(json_file_path)
     questions = load_json_file(questions_file_path)
-    llm = init_ollama(ollama_base_url, ollama_model)
-    agents = create_agents(num_agents, llm, db_conn)
+    
+    try:
+        claude_client = init_claude()
+    except ValueError as e:
+        print(f"Error: {e}")
+        print("Please set your ANTHROPIC_API_KEY environment variable.")
+        exit(1)
+        
+    agents = create_agents(num_agents, claude_client, db_conn)
 
     question_accuracies = {i: [] for i in range(len(questions))}
 

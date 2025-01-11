@@ -1,0 +1,34 @@
+[{
+    "question": "In the scene, there is an object which belongs to someone. Who is the owner?",
+    "options": {
+      "a": "Shuvo",
+      "b": "Nafiul",
+      "c": "Shawn",
+      "d": "Kim"
+    },
+    "answer": "b",
+    "image_path": "Image Data/image_1.png"
+  },
+  {
+    "question": "There is an object in the scene which is blue in color with a unique feature. Where can it find the unique feature?",
+    "options": {
+      "a": "Bottom of the bottle",
+      "b": "Top right of the bottle",
+      "c": "Top middle of the bottle",
+      "d": "Bottom left of the bottle"
+    },
+    "answer": "c",
+    "image_path": "Image Data/image_3.png"
+  },
+{
+    "question": " To reach an object which is blue in color, which side should ito move first?",
+    "options": {
+      "a": "Up",
+      "b": "Down",
+      "c": "Left",
+      "d": "Right"
+    },
+    "answer": "d",
+    "image_path": "Image Data/image_5.png"
+  }
+]
